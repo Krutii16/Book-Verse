@@ -1,0 +1,54 @@
+<div class="p-6">
+
+  <!-- Title -->
+  <h2 class="text-2xl font-bold text-blue-600 text-center mb-6">
+    Manage Moods
+  </h2>
+
+  <!-- Add Mood -->
+  <div class="flex justify-center gap-2 mb-6">
+    <input 
+      [(ngModel)]="newMood"
+      placeholder="Enter mood name"
+      class="border p-2 rounded w-64">
+
+    <button 
+      (click)="addMood()"
+      class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+      Add
+    </button>
+  </div>
+
+  <!-- Mood List -->
+  <div *ngIf="moods.length > 0"
+       class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+
+    <div *ngFor="let mood of moods; let i = index"
+         class="bg-white rounded-xl shadow-md hover:shadow-xl transition p-4 border">
+
+      <!-- Mood Name -->
+      <h3 class="text-lg font-bold text-blue-600 mb-3 truncate text-center">
+        {{ mood.name || mood }}
+      </h3>
+
+      <!-- Actions -->
+      <div class="flex justify-center">
+
+        <button 
+          (click)="deleteMood(mood._id)"
+          class="bg-red-500 text-white px-3 py-1 text-xs rounded-lg hover:bg-red-600 transition">
+          Delete
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Empty -->
+  <div *ngIf="moods.length === 0" class="text-center text-gray-500 mt-6">
+    No moods available
+  </div>
+
+</div>

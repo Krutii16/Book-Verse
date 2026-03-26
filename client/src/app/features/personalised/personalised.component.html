@@ -1,0 +1,36 @@
+<div class="min-h-screen bg-gray-50 py-12 px-4">
+  <div class="max-w-2xl mx-auto relative">
+
+    <h1 class="text-4xl font-bold mb-8">Personalised Search</h1>
+
+    <!-- Search Input -->
+    <input
+      type="text"
+      placeholder="Search books..."
+      [(ngModel)]="searchKeyword"
+      (input)="search()"
+      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+    />
+
+    <!-- Dropdown -->
+    <div *ngIf="showDropdown && searchResults.length > 0"
+         class="absolute w-full bg-white shadow-lg rounded-lg mt-2 max-h-80 overflow-y-auto z-50">
+
+      <div *ngFor="let book of searchResults"
+           (click)="goToBook(book._id!); $event.stopPropagation()"
+           class="px-4 py-3 hover:bg-gray-100 cursor-pointer border-b">
+
+        <p class="font-semibold">{{ book.title }}</p>
+        <p class="text-sm text-gray-600">by {{ book.author }}</p>
+      </div>
+
+    </div>
+
+    <!-- No results -->
+    <div *ngIf="showDropdown && searchResults.length === 0"
+         class="absolute w-full bg-white shadow-lg rounded-lg mt-2 p-4 text-gray-500 z-50">
+      No books found
+    </div>
+
+  </div>
+</div>

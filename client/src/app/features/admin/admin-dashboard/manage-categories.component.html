@@ -1,0 +1,53 @@
+<div class="p-6">
+
+  <!-- Title -->
+  <h2 class="text-2xl font-bold text-blue-600 text-center mb-6">
+    Manage Categories
+  </h2>
+
+  <!-- Add Category -->
+  <div class="flex justify-center gap-2 mb-6">
+    <input 
+      [(ngModel)]="newCategory"
+      placeholder="Enter category name"
+      class="border p-2 rounded w-64">
+
+    <button 
+      (click)="addCategory()"
+      class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+      Add
+    </button>
+  </div>
+<!-- Categories List -->
+ <div class="max-w-5xl mx-auto">
+
+  <!-- Empty -->
+  <div *ngIf="categories.length === 0" class="text-center text-gray-500">
+    No categories available
+  </div>
+
+  <!-- Grid Cards (4 per row) -->
+<div *ngIf="categories.length > 0"
+     class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+
+  <div *ngFor="let cat of categories; let i = index"
+       class="bg-white rounded-l shadow-md hover:shadow-xl transition p-4 border text-center">
+
+    <!-- Category Name -->
+    <h3 class="text-lg font-bold text-blue-600 mb-3 truncate">
+      {{ cat.name || cat.genre || cat }}
+    </h3>
+
+    <!-- Actions -->
+    <div class="flex justify-center">
+      <button 
+        (click)="deleteCategory(cat._id)"
+        class="bg-red-500 text-white px-3 py-1 text-xs rounded-lg hover:bg-red-600 transition">
+        Delete
+      </button>
+
+    </div>
+
+  </div>
+
+</div>

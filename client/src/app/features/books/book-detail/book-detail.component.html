@@ -1,0 +1,138 @@
+<div class="min-h-screen bg-gray-50 py-8">
+  <div *ngIf="loading" class="text-center py-12">
+    <p class="text-gray-500">Loading book...</p>
+  </div>
+
+  <div *ngIf="!loading && book" class="max-w-6xl mx-auto px-4">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+      <!-- Book Image -->
+      <div class="bg-white rounded-lg shadow p-8">
+        <img *ngIf="book.image" [src]="book.image" [alt]="book.title" class="w-full h-auto object-cover rounded-lg">
+        <div *ngIf="!book.image" class="w-full h-96 bg-gray-200 rounded-lg flex items-center justify-center">
+          <p class="text-gray-500">No image</p>
+        </div>
+      </div>
+
+      <!-- Book Details -->
+      <div class="bg-white rounded-lg shadow p-8">
+        <h1 class="text-4xl font-bold mb-2">{{ book.title }}</h1>
+        <p class="text-xl text-gray-600 mb-4">by {{ book.author }}</p>
+
+        <!-- Rating -->
+        <div class="flex items-center mb-4">
+          <span class="text-yellow-500 text-2xl">★</span>
+          <span class="ml-2 text-lg">{{ book.rating }}/5</span>
+          <span class="ml-2 text-gray-500">({{ book.reviews }} reviews)</span>
+        </div>
+
+        <!-- Price -->
+        <div class="mb-6">
+          <span class="text-4xl font-bold text-blue-600">₹{{ book.price }}</span>
+          <span *ngIf="book.discount" class="ml-4 text-red-500">-{{ book.discount }}% OFF</span>
+        </div>
+
+        <!-- Details -->
+        <div class="grid grid-cols-2 gap-4 mb-6 text-sm">
+          <div>
+            <p class="text-gray-600">Genre</p>
+            <p class="font-semibold">{{ book.genre }}</p>
+          </div>
+          <div>
+            <p class="text-gray-600">Language</p>
+            <p class="font-semibold">{{ book.language }}</p>
+          </div>
+          <div>
+            <p class="text-gray-600">Pages</p>
+            <p class="font-semibold">{{ book.pages }}</p>
+          </div>
+          <div>
+            <p class="text-gray-600">Year</p>
+            <p class="font-semibold">{{ book.year }}</p>
+          </div>
+        </div>
+
+        <!-- Stock Status -->
+        <div class="mb-6">
+          <span *ngIf="book.inStock" class="text-green-600 font-semibold">In Stock</span>
+          <span *ngIf="!book.inStock" class="text-red-600 font-semibold">Out of Stock</span>
+        <p class="text-sm text-gray-500">
+  Only {{ book.quantity }} left
+</p>
+        </div>
+
+        <!-- Add to Cart -->
+        <div class="flex items-center gap-4 mb-6">
+          <div class="flex items-center border border-gray-300 rounded-lg">
+            <button (click)="quantity = Math.max(1, quantity - 1)" class="px-3 py-2">-</button>
+            <span class="px-4 py-2">{{ quantity }}</span>
+            <button (click)="quantity = quantity + 1" class="px-3 py-2">+</button>
+          </div>
+         <button 
+  class="bg-blue-600 text-white px-4 py-2 rounded disabled:bg-gray-400"
+[disabled]="!book?.quantity || book.quantity <= 0"
+ (click)="addToCart()">
+  Add to Cart
+</button>
+
+      </div>
+
+        <!-- Moods and Keywords -->
+        <div *ngIf="book.moods && book.moods.length > 0" class="mb-4">
+          <p class="text-sm text-gray-600 mb-2">Moods:</p>
+          <div class="flex flex-wrap gap-2">
+            <span *ngFor="let mood of book.moods" class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm">
+              {{ mood }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Description -->
+    <div class="bg-white rounded-lg shadow p-8 mb-8">
+      <h2 class="text-2xl font-bold mb-4">Description</h2>
+      <p class="text-gray-700 leading-relaxed">{{ book.description }}</p>
+    </div>
+
+    <!-- Reviews Section -->
+    <div class="bg-white rounded-lg shadow p-8">
+      <h2 class="text-2xl font-bold mb-6">Customer Reviews</h2>
+
+      <!-- Add Review (if authenticated) -->
+      <div *ngIf="user$ | async as user" class="mb-8 pb-8 border-b">
+        <h3 class="text-lg font-semibold mb-4">Leave a Review</h3>
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium mb-2">Rating</label>
+            <select [(ngModel)]="newRating" class="w-full p-2 border border-gray-300 rounded-lg">
+              <option *ngFor="let i of [1,2,3,4,5]" [value]="i">{{ i }} Star{{ i > 1 ? 's' : '' }}</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-2">Comment</label>
+            <textarea [(ngModel)]="newComment" rows="4" class="w-full p-2 border border-gray-300 rounded-lg" placeholder="Share your thoughts..."></textarea>
+          </div>
+          <button (click)="submitReview()" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+            Submit Review
+          </button>
+        </div>
+      </div>
+
+      <!-- Display Reviews -->
+      <div class="space-y-4">
+        <div *ngFor="let review of reviews" class="border-b pb-4">
+          <div class="flex justify-between mb-2">
+            <p class="font-semibold">{{ review.userName }}</p>
+            <span class="text-yellow-500">★ {{ review.rating }}/5</span>
+          </div>
+          <p class="text-gray-700">{{ review.comment }}</p>
+          <p class="text-sm text-gray-500 mt-2">{{ review.createdAt | date }}</p>
+        </div>
+      </div>
+
+      <div *ngIf="reviews.length === 0" class="text-center py-8 text-gray-500">
+        No reviews yet. Be the first to review this book!
+      </div>
+    </div>
+  </div>
+</div>

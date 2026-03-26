@@ -1,0 +1,95 @@
+<div class="min-h-screen bg-gray-50 py-8">
+  <div class="max-w-6xl mx-auto px-4">
+    <h1 class="text-3xl font-bold mb-8">Shopping Cart</h1>
+
+    <div *ngIf="loading" class="text-center py-12">
+      <p class="text-gray-500">Loading cart...</p>
+    </div>
+
+    <div *ngIf="!loading && cartItems.length === 0" class="bg-white rounded-lg shadow p-12 text-center">
+      <p class="text-gray-500 text-lg mb-6">Your cart is empty</p>
+      <a routerLink="/books" class="inline-block px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+        Continue Shopping
+      </a>
+    </div>
+
+    <div *ngIf="!loading && cartItems.length > 0" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- Cart Items -->
+      <div class="lg:col-span-2">
+        <div class="bg-white rounded-lg shadow">
+          <div class="space-y-4 p-6">
+            <div *ngFor="let item of cartItems" class="flex gap-4 border-b pb-4">
+              <!-- Image -->
+              <div class="w-20 h-24 bg-gray-200 rounded flex-shrink-0">
+                <img *ngIf="item.book.image" [src]="item.book.image" [alt]="item.book.title" class="w-full h-full object-cover rounded">
+              </div>
+
+              <!-- Details -->
+              <div class="flex-1">
+                <h3 class="font-bold text-lg">{{ item.book.title }}</h3>
+                <p class="text-gray-600 text-sm">by {{ item.book.author }}</p>
+                <p class="text-blue-600 font-semibold text-lg mt-2">₹{{ item.book.price }}</p>
+              </div>
+
+              <!-- Quantity and Actions -->
+              <div class="flex flex-col items-end justify-between">
+                <div class="flex items-center border border-gray-300 rounded">
+                  <button (click)="updateQuantity(item._id || '', Math.max(1, item.quantity - 1))" class="px-2 py-1">-</button>
+                  <span class="px-3 py-1">{{ item.quantity }}</span>
+                  <button (click)="updateQuantity(item._id || '', item.quantity + 1)" class="px-2 py-1">+</button>
+                </div>
+
+                <button (click)="removeItem(item._id || '')" class="text-red-600 hover:text-red-800 text-sm font-semibold mt-2">
+                  Remove
+                </button>
+              </div>
+
+              <!-- Subtotal -->
+              <div class="text-right">
+                <p class="text-gray-600 text-sm">Subtotal</p>
+                <p class="font-bold">₹{{ item.itemTotal }}</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-gray-50 p-6 border-t">
+            <button (click)="clearCart()" class="text-red-600 hover:text-red-800 font-semibold">
+              Clear Cart
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Order Summary -->
+      <div class="lg:col-span-1">
+        <div class="bg-white rounded-lg shadow p-6 sticky top-20">
+          <h2 class="text-xl font-bold mb-6">Order Summary</h2>
+
+          <div class="space-y-4 mb-6">
+            <div class="flex justify-between">
+              <span class="text-gray-600">Subtotal</span>
+              <span class="font-semibold">₹{{ totalPrice }}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Shipping</span>
+              <span class="font-semibold">₹10.00</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Tax</span>
+              <span class="font-semibold">₹{{ (totalPrice * 0.1).toFixed(2) }}</span>
+            </div>
+
+            <div class="border-t pt-4 flex justify-between">
+              <span class="font-bold">Total</span>
+              <span class="font-bold text-lg text-blue-600">₹{{ (totalPrice + 10 + totalPrice * 0.1).toFixed(2) }}</span>
+            </div>
+          </div>
+
+          <a routerLink="/checkout" class="w-full block text-center py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700">
+            Proceed to Checkout
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
