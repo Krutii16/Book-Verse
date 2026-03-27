@@ -17,6 +17,9 @@ export class CategoryService {
 getGenres() {
   return this.http.get<any>('http://localhost:5000/api/books/genres');
 }
+getBooks() {
+  return this.http.get('/api/books'); 
+}
   addCategory(name: string): Observable<any> {
     return this.http.post(this.apiUrl, { name });
   }
