@@ -79,8 +79,12 @@
       <input [(ngModel)]="bookData.isbn" placeholder="ISBN"
         class="border p-2 rounded">
 
-      <input [(ngModel)]="bookData.genre" placeholder="Genre"
-        class="border p-2 rounded">
+      <select [(ngModel)]="bookData.genre">
+  <option value="">Select Genre</option>
+  <option *ngFor="let g of genres" [value]="g._id">
+    {{ g.name }}
+  </option>
+</select>
 
       <input [(ngModel)]="bookData.price" type="number" placeholder="Price"
         class="border p-2 rounded">

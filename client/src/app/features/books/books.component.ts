@@ -40,103 +40,39 @@ export class BooksComponent implements OnInit {
 
   ngOnInit(): void {
 
-    // Load genres for filter dropdown
+    // Load genres
     this.metadataService.getGenres().subscribe();
     this.metadataService.genres$.subscribe(genres => {
       this.genres = genres;
     });
 
-    // Listen for category click (?genre=...)
-    this.route.queryParams.subscribe(params => {
-      this.selectedGenre = params['genre'] || '';
+    // Listen for route params (category click)
+    this.route.params.subscribe(params => {
+      const genreId = params['genreId'];
 
-      if (params['moods']) {
-        this.loadBooksByMood(params['moods']);
+      if (genreId) {
+        this.loadBooksByGenre(genreId);
       } else {
         this.loadBooks();
       }
     });
+
+    // Mood filter
+    this.route.queryParams.subscribe(params => {
+      if (params['moods']) {
+        this.loadBooksByMood(params['moods']);
+      }
+    });
   }
 
-  // ✅ MAIN LOAD FUNCTION (FIXED)
+  // Load all books
   loadBooks(): void {
     this.loading = true;
 
     this.bookService.getAllBooks().subscribe({
       next: (res: any) => {
-        console.log('ALL BOOKS:', res);
-
         this.originalBooks = res.books || [];
-
-        let filtered = [...this.originalBooks];
-
-        // ✅ FILTER BY GENRE
-       if (this.selectedGenre) {
-  const selected = this.selectedGenre.toLowerCase().trim();
-
-  filtered = filtered.filter((book: any) => {
-    if (!book.genre) return false;
-
-    // If genre is OBJECT (Mongo populate case)
-    if (typeof book.genre === 'object' && book.genre.name) {
-      return book.genre.name.toLowerCase() === selected;
-    }
-
-    if (typeof book.genre === 'string') {
-      return book.genre.toLowerCase() === selected;
-    }
-
-    return false;
-  });
-  
-}
-
-
-        // ✅ PRICE FILTER
-        if (this.minPrice !== null) {
-          filtered = filtered.filter(b => b.price >= this.minPrice!);
-        }
-
-        if (this.maxPrice !== null) {
-          filtered = filtered.filter(b => b.price <= this.maxPrice!);
-        }
-
-        this.totalBooks = filtered.length;
-
-        // ✅ PAGINATION SLICE
-        const start = (this.page - 1) * this.limit;
-        const end = start + this.limit;
-        this.books = filtered.slice(start, end);
-
-        this.generatePages(filtered.length);
-        this.applySorting();
-
-        this.loading = false;
-      },
-      error: (err) => {
-        console.error(err);
-        this.books = [];
-        this.loading = false;
-      }
-    });
-  }
-
-  // ✅ MOOD FILTER
-  loadBooksByMood(mood: string): void {
-    this.loading = true;
-
-    this.bookService.getBooksByMood(mood).subscribe({
-      next: (res: any) => {
-        this.originalBooks = res.books || [];
-        this.totalBooks = this.originalBooks.length;
-
-        const start = (this.page - 1) * this.limit;
-        const end = start + this.limit;
-        this.books = this.originalBooks.slice(start, end);
-
-        this.generatePages(this.totalBooks);
-        this.applySorting();
-
+        this.applyFilters();
         this.loading = false;
       },
       error: () => {
@@ -146,38 +82,100 @@ export class BooksComponent implements OnInit {
     });
   }
 
-  // ✅ SORTING
+  // Load books by genre from backend
+  loadBooksByGenre(genreId: string): void {
+    this.loading = true;
+
+    this.bookService.getBooksByGenre(genreId).subscribe({
+      next: (res: any) => {
+        this.originalBooks = res.books || [];
+        this.applyFilters();
+        this.loading = false;
+      },
+      error: () => {
+        this.books = [];
+        this.loading = false;
+      }
+    });
+  }
+
+  // Mood filter
+  loadBooksByMood(mood: string): void {
+    this.loading = true;
+
+    this.bookService.getBooksByMood(mood).subscribe({
+      next: (res: any) => {
+        this.originalBooks = res.books || [];
+        this.applyFilters();
+        this.loading = false;
+      },
+      error: () => {
+        this.books = [];
+        this.loading = false;
+      }
+    });
+  }
+
+  // Apply filters + pagination + sorting
+  applyFilters(): void {
+    let filtered = [...this.originalBooks];
+
+    if (this.selectedGenre) {
+      const selected = this.selectedGenre.toLowerCase().trim();
+
+      filtered = filtered.filter((book: any) => {
+        if (!book.genre) return false;
+
+        if (typeof book.genre === 'string') {
+          return book.genre.toLowerCase().trim() === selected;
+        }
+
+        if (book.genre.name) {
+          return book.genre.name.toLowerCase().trim() === selected;
+        }
+
+        return false;
+      });
+    }
+
+    if (this.minPrice !== null) {
+      filtered = filtered.filter(b => b.price >= this.minPrice!);
+    }
+
+    if (this.maxPrice !== null) {
+      filtered = filtered.filter(b => b.price <= this.maxPrice!);
+    }
+
+    this.totalBooks = filtered.length;
+
+    const start = (this.page - 1) * this.limit;
+    const end = start + this.limit;
+    this.books = filtered.slice(start, end);
+
+    this.generatePages(filtered.length);
+    this.applySorting();
+  }
+
   applySorting(): void {
     switch (this.sortBy) {
-
       case 'price-asc':
         this.books.sort((a, b) => a.price - b.price);
         break;
-
       case 'price-desc':
         this.books.sort((a, b) => b.price - a.price);
         break;
-
       case 'rating':
         this.books.sort((a, b) => b.rating - a.rating);
         break;
-
-      case 'latest':
       default:
         this.books.sort(
           (a, b) =>
             new Date(b.createdAt || '').getTime() -
             new Date(a.createdAt || '').getTime()
         );
-        break;
     }
   }
 
-  sortBooks(): void {
-    this.loadBooks(); // reload with sorting
-  }
-
-  // ✅ PAGINATION
   generatePages(total: number): void {
     const totalPages = Math.ceil(total / this.limit);
     this.pages = Array.from({ length: totalPages }, (_, i) => i + 1);
@@ -185,21 +183,19 @@ export class BooksComponent implements OnInit {
 
   changePage(pageNum: number): void {
     this.page = pageNum;
-    this.loadBooks();
+    this.applyFilters();
   }
 
-  // ✅ FILTER BUTTON
   filterBooks(): void {
     this.page = 1;
-    this.loadBooks();
+    this.applyFilters();
   }
 
-  // ✅ RESET
   resetFilters(): void {
     this.selectedGenre = '';
     this.minPrice = null;
     this.maxPrice = null;
     this.page = 1;
-    this.loadBooks();
+    this.applyFilters();
   }
 }
