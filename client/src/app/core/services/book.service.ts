@@ -13,13 +13,13 @@ export class BookService {
   constructor(private http: HttpClient) {}
 
   // Get all books
-  getAllBooks(page: number = 1, limit: number = 12): Observable<any> {
-    const params = new HttpParams()
-      .set('page', page)
-      .set('limit', limit);
+ getAllBooks() {
+  return this.http.get('/api/books');
+}
 
-    return this.http.get<any>(`${this.apiUrl}`, { params });
-  }
+getBooksByGenre(genreId: string) {
+  return this.http.get(`/api/books/genre/${genreId}`);
+}
 
   // Get book by ID
   getBookById(id: string): Observable<any> {
@@ -34,9 +34,6 @@ export class BookService {
   // Bestsellers
   getBestsellers() {
   return this.http.get('/api/books/bestsellers');
-}
-getBooksByGenre(id: string) {
-  return this.http.get<any>(`http://localhost:5000/api/books/genre/${id}`);
 }
   // Search
   searchBooks(query: string): Observable<any> {
