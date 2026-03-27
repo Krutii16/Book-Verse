@@ -13,7 +13,7 @@ import { FormsModule } from '@angular/forms';
 export class ManageBooksComponent implements OnInit {
 
   books: any[] = [];
-  genres: any[] = []; // ✅ ADD THIS
+  genres: any[] = []; //  ADD THIS
 
   showForm = false;
   isEdit = false;
@@ -23,31 +23,31 @@ export class ManageBooksComponent implements OnInit {
     author: '',
     isbn: '',
     description: '',
-    price: 0,
+    price: '',
     image: '',
     genre: '', // will store genreId
-    quantity: 0,
-    discount: 0
+    quantity: '',
+    discount: ''
   };
 
   constructor(
     private adminService: AdminService,
-    private metadataService: MetadataService // ✅ ADD THIS
+    private metadataService: MetadataService //  ADD THIS
   ) {}
 
   ngOnInit() {
     this.loadBooks();
-    this.loadGenres(); // ✅ LOAD GENRES
+    this.loadGenres(); //  LOAD GENRES
   }
 
-  // ✅ LOAD BOOKS
+  //  LOAD BOOKS
   loadBooks() {
     this.adminService.getBooks().subscribe((res: any) => {
       this.books = res.books || res;
     });
   }
 
-  // ✅ LOAD GENRES
+  //  LOAD GENRES
   loadGenres() {
     this.metadataService.getGenres().subscribe((res: any) => {
       this.genres = res.genres || [];
@@ -75,7 +75,7 @@ export class ManageBooksComponent implements OnInit {
   editBook(book: any) {
     this.isEdit = true;
 
-    // ✅ IMPORTANT: set genreId properly
+    //  IMPORTANT: set genreId properly
     this.bookData = {
       ...book,
       genre: book.genre?.[0]?._id || '' // handle array
@@ -91,7 +91,7 @@ export class ManageBooksComponent implements OnInit {
     this.bookData.quantity = Number(this.bookData.quantity || 0);
     this.bookData.discount = Number(this.bookData.discount || 0);
 
-    // ✅ FIX: CONVERT genre → ARRAY
+    //  FIX: CONVERT genre → ARRAY
     const payload = {
       ...this.bookData,
       genre: this.bookData.genre ? [this.bookData.genre] : []
@@ -117,7 +117,7 @@ export class ManageBooksComponent implements OnInit {
     }
   }
 
-  // ❌ Delete
+  //  Delete
   deleteBook(id: string) {
     if (confirm('Delete this book?')) {
       this.adminService.deleteBook(id).subscribe(() => {
@@ -130,7 +130,7 @@ export class ManageBooksComponent implements OnInit {
     this.showForm = false;
   }
 
-  // 📷 Image upload
+  //  Image upload
   onImageUpload(event: any) {
     const file = event.target.files[0];
     const reader = new FileReader();

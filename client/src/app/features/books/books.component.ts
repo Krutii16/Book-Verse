@@ -22,7 +22,6 @@ export class BooksComponent implements OnInit {
   selectedGenre = '';
   minPrice: number | null = null;
   maxPrice: number | null = null;
-
   sortBy = 'latest';
 
   page = 1;
@@ -40,13 +39,13 @@ export class BooksComponent implements OnInit {
 
   ngOnInit(): void {
 
-    // Load genres
+    // Load genres for sidebar
     this.metadataService.getGenres().subscribe();
     this.metadataService.genres$.subscribe(genres => {
       this.genres = genres;
     });
 
-    // Listen for route params (category click)
+    // Detect category click
     this.route.params.subscribe(params => {
       const genreId = params['genreId'];
 
@@ -56,88 +55,49 @@ export class BooksComponent implements OnInit {
         this.loadBooks();
       }
     });
-
-    // Mood filter
-    this.route.queryParams.subscribe(params => {
-      if (params['moods']) {
-        this.loadBooksByMood(params['moods']);
-      }
-    });
   }
 
-  // Load all books
   loadBooks(): void {
     this.loading = true;
 
-    this.bookService.getAllBooks().subscribe({
-      next: (res: any) => {
-        this.originalBooks = res.books || [];
-        this.applyFilters();
-        this.loading = false;
-      },
-      error: () => {
-        this.books = [];
-        this.loading = false;
-      }
+    this.bookService.getAllBooks().subscribe((res: any) => {
+      this.originalBooks = res.books || [];
+      this.applyFilters();
+      this.loading = false;
     });
   }
 
-  // Load books by genre from backend
   loadBooksByGenre(genreId: string): void {
     this.loading = true;
 
-    this.bookService.getBooksByGenre(genreId).subscribe({
-      next: (res: any) => {
-        this.originalBooks = res.books || [];
-        this.applyFilters();
-        this.loading = false;
-      },
-      error: () => {
-        this.books = [];
-        this.loading = false;
-      }
+    this.bookService.getBooksByGenre(genreId).subscribe((res: any) => {
+      this.originalBooks = res.books || [];
+      this.applyFilters();
+      this.loading = false;
     });
   }
 
-  // Mood filter
-  loadBooksByMood(mood: string): void {
-    this.loading = true;
-
-    this.bookService.getBooksByMood(mood).subscribe({
-      next: (res: any) => {
-        this.originalBooks = res.books || [];
-        this.applyFilters();
-        this.loading = false;
-      },
-      error: () => {
-        this.books = [];
-        this.loading = false;
-      }
-    });
-  }
-
-  // Apply filters + pagination + sorting
   applyFilters(): void {
     let filtered = [...this.originalBooks];
 
+    // Sidebar genre filter
     if (this.selectedGenre) {
       const selected = this.selectedGenre.toLowerCase().trim();
 
       filtered = filtered.filter((book: any) => {
         if (!book.genre) return false;
 
-        if (typeof book.genre === 'string') {
-          return book.genre.toLowerCase().trim() === selected;
-        }
-
-        if (book.genre.name) {
-          return book.genre.name.toLowerCase().trim() === selected;
+        if (Array.isArray(book.genre) && book.genre.length > 0) {
+          if (book.genre[0].name) {
+            return book.genre[0].name.toLowerCase().trim() === selected;
+          }
         }
 
         return false;
       });
     }
 
+    // Price filter
     if (this.minPrice !== null) {
       filtered = filtered.filter(b => b.price >= this.minPrice!);
     }
@@ -187,14 +147,6 @@ export class BooksComponent implements OnInit {
   }
 
   filterBooks(): void {
-    this.page = 1;
-    this.applyFilters();
-  }
-
-  resetFilters(): void {
-    this.selectedGenre = '';
-    this.minPrice = null;
-    this.maxPrice = null;
     this.page = 1;
     this.applyFilters();
   }

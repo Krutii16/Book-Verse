@@ -12,9 +12,11 @@
           <div class="mb-6">
             <label class="block text-sm font-semibold mb-2">Genre</label>
             <select [(ngModel)]="selectedGenre" (change)="filterBooks()" class="w-full p-2 border border-gray-300 rounded-lg">
-              <option value="">All Genres</option>
-              <option *ngFor="let genre of genres" [value]="genre.name.toLowerCase()">{{ genre.name }}</option>
-            </select>
+  <option value="">All Genres</option>
+  <option *ngFor="let genre of genres" [value]="genre.name.toLowerCase()">
+    {{ genre.name }}
+  </option>
+</select>
           </div>
 
           <!-- Price Filter -->

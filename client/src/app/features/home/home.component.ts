@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { BookService } from '../../core/services/book.service';
 import { MetadataService } from '../../core/services/metadata.service';
 import { Book, Genre, Mood } from '../../core/models/book.model';
@@ -13,6 +13,7 @@ import { Book, Genre, Mood } from '../../core/models/book.model';
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
+
   featuredBooks: Book[] = [];
   bestsellers: Book[] = [];
   genres: Genre[] = [];
@@ -21,7 +22,8 @@ export class HomeComponent implements OnInit {
 
   constructor(
     private bookService: BookService,
-    private metadataService: MetadataService
+    private metadataService: MetadataService,
+    private router: Router   // ✅ FIX: add router
   ) {}
 
   ngOnInit(): void {
@@ -42,7 +44,6 @@ export class HomeComponent implements OnInit {
 
     this.bookService.getBestsellers().subscribe({
       next: (response: any) => {
-        console.log('Bestsellers:', response);
         this.bestsellers = response?.books ?? [];
       },
       error: (err) => {
@@ -61,6 +62,24 @@ export class HomeComponent implements OnInit {
 
     this.metadataService.moods$.subscribe((moods: Mood[]) => {
       this.moods = moods;
+    });
+  }
+
+  // =========================
+  // ✅ NAVIGATION FIX HERE
+  // =========================
+
+  goToGenre(genre: Genre): void {
+    this.router.navigate(['/books'], {
+    queryParams: {
+      genre: genre._id   // or name if you prefer
+    }
+  });
+  }
+
+  goToMood(mood: Mood): void {
+    this.router.navigate(['/books'], {
+      queryParams: { mood: mood.name }
     });
   }
 
