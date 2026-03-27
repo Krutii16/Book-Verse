@@ -39,15 +39,29 @@ export class BooksComponent implements OnInit {
 
   ngOnInit(): void {
 
-    // Load genres for sidebar
-    this.metadataService.getGenres().subscribe();
-    this.metadataService.genres$.subscribe(genres => {
-      this.genres = genres;
-    });
+  // Load genres for sidebar
+  this.metadataService.getGenres().subscribe();
+  this.metadataService.genres$.subscribe(genres => {
+    this.genres = genres;
+  });
 
-    // Detect category click
-    this.route.params.subscribe(params => {
-      const genreId = params['genreId'];
+  // Handle query params first (Home filters)
+  this.route.queryParams.subscribe(params => {
+
+    if (params['moods']) {
+      this.loadBooksByMood(params['moods']);
+      return;
+    }
+
+    if (params['genre']) {
+      this.selectedGenre = params['genre'].toLowerCase();
+      this.loadBooks();
+      return;
+    }
+
+    // If no query params, check route params
+    this.route.params.subscribe(routeParams => {
+      const genreId = routeParams['genreId'];
 
       if (genreId) {
         this.loadBooksByGenre(genreId);
@@ -55,8 +69,9 @@ export class BooksComponent implements OnInit {
         this.loadBooks();
       }
     });
-  }
 
+  });
+}
   loadBooks(): void {
     this.loading = true;
 
@@ -66,7 +81,15 @@ export class BooksComponent implements OnInit {
       this.loading = false;
     });
   }
+loadBooksByMood(mood: string): void {
+  this.loading = true;
 
+  this.bookService.getBooksByMood(mood).subscribe((res: any) => {
+    this.originalBooks = res.books || [];
+    this.applyFilters();
+    this.loading = false;
+  });
+}
   loadBooksByGenre(genreId: string): void {
     this.loading = true;
 

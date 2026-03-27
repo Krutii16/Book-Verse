@@ -21,6 +21,9 @@ getBooksByGenre(genreId: string) {
   return this.http.get(`/api/books/genre/${genreId}`);
 }
 
+getBooksByMood(mood: string) {
+  return this.http.get(`/api/books/filter?moods=${mood}`);
+}
   // Get book by ID
   getBookById(id: string): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/${id}`);
@@ -54,11 +57,7 @@ getBooksByGenre(genreId: string) {
 
     return this.http.get<any>(`${this.apiUrl}/filter`, { params });
   }
-  // mood
-  getBooksByMood(mood: string): Observable<any> {
-    const params = new HttpParams().set('moods', mood);
-    return this.http.get<any>(`${this.apiUrl}/filter`, { params });
-  }
+  
 
   // Create
   createBook(book: Book): Observable<any> {

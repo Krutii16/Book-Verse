@@ -4,10 +4,13 @@ import { authMiddleware, adminMiddleware } from '../middleware/auth';
 
 const router = Router();
 
+
+
+router.get('/', bookController.getAllBooks);
 router.get('/featured', bookController.getFeaturedBooks);
 router.get('/bestsellers', bookController.getBestsellers);
+router.get('/filter', bookController.filterBooks);
 router.get('/genre/:genreId', bookController.getBooksByGenre);
-router.get('/', bookController.getAllBooks);
 router.get('/:id', bookController.getBookById);
 
 router.post('/', authMiddleware, adminMiddleware, bookController.createBook);

@@ -72,7 +72,7 @@ export class HomeComponent implements OnInit {
   goToGenre(genre: Genre): void {
     this.router.navigate(['/books'], {
     queryParams: {
-      genre: genre._id   // or name if you prefer
+      genre: genre._id   
     }
   });
   }

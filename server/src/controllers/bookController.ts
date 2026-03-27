@@ -65,7 +65,33 @@ export const getBooksByGenre = async (req: Request, res: Response) => {
     res.status(500).json({ error: 'Error fetching books by genre' });
   }
 };
+export const filterBooks = async (req: Request, res: Response) => {
+  try {
+    const { moods, genre, minPrice, maxPrice } = req.query;
 
+    const filter: any = {};
+
+    if (genre) filter.genre = genre;
+
+    if (minPrice || maxPrice) {
+      filter.price = {};
+      if (minPrice) filter.price.$gte = Number(minPrice);
+      if (maxPrice) filter.price.$lte = Number(maxPrice);
+    }
+
+    if (moods) {
+      filter.moods = { $in: [moods] };
+    }
+
+    const books = await Book.find(filter)
+      .populate('genre', 'name');
+
+    res.json({ books });
+
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+};
 /**
  * Featured books
  */
