@@ -4,6 +4,9 @@ import { AdminGuard } from './core/guards/admin.guard';
 import { ManageBooksComponent } from './features/admin/admin-dashboard/manage-books.component';
 import { ManageCategoriesComponent } from './features/admin/admin-dashboard/manage-categories.component';
 import { ManageMoodsComponent } from './features/admin/admin-dashboard/manage-mood.component';
+import { ManageContactComponent } from './features/admin/admin-dashboard/manage-contact.component';
+import { ManageOrdersComponent } from './features/admin/admin-dashboard/manage-orders.component';
+import { MyOrdersComponent } from './features/orders/my-orders.component';
 export const routes: Routes = [
   {
     path: '',
@@ -30,6 +33,10 @@ export const routes: Routes = [
     loadComponent: () => import('./features/moods/moods.component').then(m => m.MoodsComponent)
   },
   {
+    path: 'my-orders',
+    component: MyOrdersComponent
+  },
+  {
     path: 'personalised',
     loadComponent: () => import('./features/personalised/personalised.component').then(m => m.PersonalisedComponent)
   },
@@ -43,6 +50,15 @@ export const routes: Routes = [
     loadComponent: () => import('./features/checkout/checkout.component').then(m => m.CheckoutComponent),
     canActivate: [AuthGuard]
   },
+  {
+  path: 'admin/manage-contact',
+  component: ManageContactComponent
+},
+{
+  path: 'admin/manage-orders',
+  component: ManageOrdersComponent
+},
+
   {
     path: 'login',
     loadComponent: () => import('./features/login/login.component').then(m => m.LoginComponent)

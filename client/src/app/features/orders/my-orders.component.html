@@ -1,0 +1,81 @@
+<div class="container py-8">
+  <h1 class="text-3xl font-bold mb-6 text-blue-600">My Orders</h1>
+
+  <!-- No Orders -->
+  <div *ngIf="orders.length === 0" class="text-gray-500 text-center">
+    No orders found
+  </div>
+
+  <!-- Orders -->
+  <div *ngFor="let order of orders" class="bg-white shadow rounded-lg p-6 mb-6">
+
+    <!-- Order Header -->
+    <div class="mt-4">
+      <h3 class="font-semibold mb-2">Book Title:</h3>
+    </div>
+      <div *ngFor="let book of order.books" 
+           class="flex justify-between border-b py-2 text-m">
+
+        <!-- Title -->
+        <span class="font-medium">
+          {{ book.bookId?.title || 'Book not found' }}
+        </span>
+ <!-- Quantity -->
+        <span>
+          Qty: {{ book.quantity }}
+        </span>
+        <!-- Price -->
+        <span>
+          ₹{{ book.price }}
+        </span>
+      <!-- Status -->
+      <!--<span
+        [ngClass]="{
+          'text-yellow-500': order.status === 'pending',
+          'text-blue-500': order.status === 'confirmed',
+          'text-purple-500': order.status === 'shipped',
+          'text-green-600': order.status === 'delivered'
+        }"
+        class="font-semibold"
+      >
+        {{ order.status }}
+      </span> -->
+    </div>
+
+    <!-- Address -->
+    <p class="text-sm text-gray-500 mb-1">
+      Address: {{ order.shippingAddress }}
+    </p>
+
+    <!-- Date -->
+    <p class="text-gray-400 text-sm mb-3">
+      {{ order.createdAt | date:'medium' }}
+    </p>
+
+    <!-- Books Section -->
+    
+      
+       
+
+        
+
+     
+   
+
+    <!-- Total -->
+    <div class="mt-4 text-right font-bold text-green-600">
+      Total: ₹{{ order.totalPrice }}
+    </div>
+
+    <!-- Cancel Button -->
+    <div class="mt-4 text-right">
+      <button
+        (click)="deleteOrder(order._id)"
+        class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition"
+      >
+        Cancel Order
+      </button>
+    </div>
+
+  </div>
+</div>

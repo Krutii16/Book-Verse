@@ -11,6 +11,7 @@ declare global {
 }
 
 export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
+  console.log("HEADERS:", req.headers);
   try {
     const token = req.headers.authorization?.split(' ')[1];
     

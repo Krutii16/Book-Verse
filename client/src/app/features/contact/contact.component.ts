@@ -37,9 +37,27 @@ export class ContactComponent {
   message = '';
 
   submitForm(): void {
-    alert('Thank you for your message! We will get back to you soon.');
+  const data = {
+    name: this.name,
+    email: this.email,
+    message: this.message
+  };
+
+  fetch('http://localhost:5000/api/contacts', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data)
+  })
+  .then(() => {
+    alert('Message sent successfully!');
     this.name = '';
     this.email = '';
     this.message = '';
-  }
+  })
+  .catch(() => {
+    alert('Error sending message');
+  });
+}
 }

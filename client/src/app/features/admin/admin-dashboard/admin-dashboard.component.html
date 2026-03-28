@@ -8,25 +8,27 @@
     <!-- Stats -->
     <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
 
-      <div class="bg-white rounded-lg shadow p-6">
-        <h3>Total Books</h3>
-        <p class="text-4xl font-bold text-blue-600">{{stats?.books || 0}}</p>
-      </div>
+      <a routerLink="/admin/books"
+   class="bg-white rounded-lg shadow p-6 block hover:shadow-xl cursor-pointer">
+  <h3>Total Books</h3>
+  <p class="text-4xl font-bold text-green-600">{{stats?.books || 0}}</p>
+</a>
 
-      <div class="bg-white rounded-lg shadow p-6">
-        <h3>Total Orders</h3>
-        <p class="text-4xl font-bold text-green-600">{{stats?.orders || 0}}</p>
-      </div>
-
+      <a routerLink="/admin/manage-orders"
+   class="bg-white rounded-lg shadow p-6 block hover:shadow-xl cursor-pointer">
+  <h3>Total Orders</h3>
+  <p class="text-4xl font-bold text-red-600">{{stats?.orders || 0}}</p>
+</a>
+<!--
       <div class="bg-white rounded-lg shadow p-6">
         <h3>Total Revenue</h3>
-        <p class="text-4xl font-bold text-purple-600">₹15899 </p> <!--{{stats?.revenue || 0}}-->
+        <p class="text-4xl font-bold text-purple-600">₹15899 </p> {{stats?.revenue || 0}}
       </div>
-
+-->
       <a routerLink="/admin/users"
    class="bg-white rounded-lg shadow p-6 block hover:shadow-xl cursor-pointer">
   <h3>Total Users</h3>
-  <p class="text-4xl font-bold text-orange-600">{{stats?.users || 0}}</p>
+  <p class="text-4xl font-bold text-purple-600">{{stats?.users || 0}}</p>
 </a>
 
     </div>
@@ -47,6 +49,10 @@
        <a routerLink="/admin/mood"
         class="bg-white p-8 rounded-lg shadow hover:shadow-xl">
         <h2 class="text-2xl font-bold text-red-600">Manage Moods</h2>
+      </a>
+      <a routerLink="/admin/manage-contact"
+        class="bg-white p-8 rounded-lg shadow hover:shadow-xl">
+        <h2 class="text-2xl font-bold text-purple-600">Manage Contact Messages</h2>
       </a>
 
     </div>

@@ -12,7 +12,16 @@
         <a routerLink="/categories" class="text-gray-700 hover:text-blue-600 transition">Categories</a>
         <a routerLink="/bestsellers" class="text-gray-700 hover:text-blue-600 transition">Bestsellers</a>
         <a routerLink="/moods" class="text-gray-700 hover:text-blue-600 transition">Moods</a>
-        <a routerLink="/contact" class="text-gray-700 hover:text-blue-600 transition">Contact</a>
+        <a
+  *ngIf="!(user$ | async)?.isAdmin"
+  routerLink="/contact"
+  class="text-gray-700 hover:text-blue-600 transition"
+>
+  Contact
+</a>
+      <a *ngIf="!isAdmin" routerLink="/my-orders">
+    My Orders
+  </a>
       </div>
 
       <!-- Search Bar -->

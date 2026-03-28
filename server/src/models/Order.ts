@@ -6,7 +6,10 @@ const orderSchema = new Schema<IOrder>(
     userId: { type: String, required: true },
     books: [
       {
-        bookId: String,
+       bookId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Book'
+    },
         quantity: Number,
         price: Number
       }

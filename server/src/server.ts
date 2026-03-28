@@ -9,6 +9,7 @@ import bookRoutes from './routes/books';
 import cartRoutes from './routes/cart';
 import orderRoutes from './routes/orders';
 import reviewRoutes from './routes/reviews';
+import contactRoutes from './routes/contact';
 import genreRoutes from './routes/genres';
 import moodRoutes from './routes/moods';
 import keywordRoutes from './routes/keywords';
@@ -43,6 +44,7 @@ app.use('/api/keywords', keywordRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/users', userRoutes);
 //app.use('/api/admin', adminMiddleware, adminRoutes);
+app.use('/api/contacts', contactRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
@@ -55,3 +57,8 @@ app.use(errorHandler);
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
+app.use(cors({
+  origin: "http://localhost:4200",
+  credentials: true,
+  allowedHeaders: ["Content-Type", "Authorization"]
+}));
