@@ -30,7 +30,22 @@ export const getAllBooks = async (req: Request, res: Response) => {
     res.status(500).json({ error: error.message });
   }
 };
+export const searchBooks = async (req: any, res: any) => {
+  try {
+    const query = req.query.query;
 
+    const books = await Book.find({
+      $or: [
+        { title: { $regex: query, $options: 'i' } },
+        { author: { $regex: query, $options: 'i' } }
+      ]
+    });
+
+    res.json({ books });
+  } catch (error) {
+    res.status(500).json({ error: 'Search failed' });
+  }
+};
 /**
  * Get book by ID
  */
