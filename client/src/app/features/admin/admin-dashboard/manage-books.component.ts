@@ -13,8 +13,8 @@ import { FormsModule } from '@angular/forms';
 export class ManageBooksComponent implements OnInit {
 
   books: any[] = [];
-  genres: any[] = []; //  ADD THIS
-
+  genres: any[] = []; 
+  moods: any[]=[];
   showForm = false;
   isEdit = false;
 
@@ -25,19 +25,21 @@ export class ManageBooksComponent implements OnInit {
     description: '',
     price: '',
     image: '',
-    genre: '', // will store genreId
+    genre: '', 
+    moods: [],
     quantity: '',
     discount: ''
   };
 
   constructor(
     private adminService: AdminService,
-    private metadataService: MetadataService //  ADD THIS
+    private metadataService: MetadataService 
   ) {}
 
   ngOnInit() {
     this.loadBooks();
-    this.loadGenres(); //  LOAD GENRES
+    this.loadGenres(); 
+    this.loadMoods();
   }
 
   //  LOAD BOOKS
@@ -53,7 +55,12 @@ export class ManageBooksComponent implements OnInit {
       this.genres = res.genres || [];
     });
   }
-
+  // Load Moods
+  loadMoods() {
+    this.metadataService.getMoods().subscribe((res: any) => {
+      this.moods = res.moods || [];
+  });
+}
   // ➕ Open Add Form
   openAddForm() {
     this.isEdit = false;
@@ -64,27 +71,30 @@ export class ManageBooksComponent implements OnInit {
       description: '',
       price: 0,
       image: '',
-      genre: '',
+      genre: [] as string[],
+      moods: [],
       quantity: 0,
-      discount: 0
+      discount: 0,
+      
     };
     this.showForm = true;
   }
 
-  // ✏️ Edit
+  // Edit
   editBook(book: any) {
     this.isEdit = true;
 
     //  IMPORTANT: set genreId properly
     this.bookData = {
       ...book,
-      genre: book.genre?.[0]?._id || '' // handle array
+      genre: book.genre?.map((g: any) => g._id) || [],
+      moods: book.moods || [] 
     };
 
     this.showForm = true;
   }
 
-  // 💾 SAVE
+  //  SAVE
   saveBook() {
 
     this.bookData.price = Number(this.bookData.price);
@@ -94,7 +104,8 @@ export class ManageBooksComponent implements OnInit {
     //  FIX: CONVERT genre → ARRAY
     const payload = {
       ...this.bookData,
-      genre: this.bookData.genre ? [this.bookData.genre] : []
+      genre: this.bookData.genre || [] ,
+      moods: this.bookData.moods
     };
 
     if (this.isEdit) {
@@ -141,4 +152,13 @@ export class ManageBooksComponent implements OnInit {
 
     reader.readAsDataURL(file);
   }
+  onMoodChange(event: any, mood: string) {
+  if (event.target.checked) {
+    this.bookData.moods.push(mood);
+  } else {
+    this.bookData.moods = this.bookData.moods.filter(
+      (m: string) => m !== mood
+    );
+  }
+}
 }

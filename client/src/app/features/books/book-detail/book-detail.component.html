@@ -32,23 +32,42 @@
         </div>
 
         <!-- Details -->
-        <div class="grid grid-cols-2 gap-4 mb-6 text-sm">
-          <div>
-            <p class="text-gray-600">Genre</p>
-            <p class="font-semibold">{{ book.genre }}</p>
-          </div>
+       <div class="grid grid-cols-2 gap-4 mb-6 text-sm">
+  <div>
+    <p class="text-gray-600 mb-1">Genre</p>
+
+    <div class="flex flex-wrap items-center gap-2">
+      <ng-container *ngFor="let g of book.genre; let i = index">
+        
+        <!-- Pill -->
+        <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
+          <ng-container *ngIf="isObject(g); else stringGenre">
+            {{ $any(g).name }}
+          </ng-container>
+          <ng-template #stringGenre>
+            {{ g }}
+          </ng-template>
+        </span>
+
+        <!-- Comma OUTSIDE -->
+        <span *ngIf="i < book.genre.length - 1" class="text-gray-600"></span>
+
+      </ng-container>
+    </div>
+  </div>
+
           <div>
             <p class="text-gray-600">Language</p>
             <p class="font-semibold">{{ book.language }}</p>
           </div>
-          <div>
+         <!-- <div>
             <p class="text-gray-600">Pages</p>
             <p class="font-semibold">{{ book.pages }}</p>
-          </div>
+          </div> -->
           <div>
             <p class="text-gray-600">Year</p>
             <p class="font-semibold">{{ book.year }}</p>
-          </div>
+          </div> 
         </div>
 
         <!-- Stock Status -->
@@ -69,7 +88,7 @@
           </div>
          <button 
   class="bg-blue-600 text-white px-4 py-2 rounded disabled:bg-gray-400"
-[disabled]="!book?.quantity || book.quantity <= 0"
+[disabled]="!book?.quantity || book.quantity <= 0 || (user$ | async)?.isAdmin"
  (click)="addToCart()">
   Add to Cart
 </button>
@@ -77,14 +96,24 @@
       </div>
 
         <!-- Moods and Keywords -->
-        <div *ngIf="book.moods && book.moods.length > 0" class="mb-4">
-          <p class="text-sm text-gray-600 mb-2">Moods:</p>
-          <div class="flex flex-wrap gap-2">
-            <span *ngFor="let mood of book.moods" class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm">
-              {{ mood }}
-            </span>
-          </div>
-        </div>
+        <div *ngIf="book.moods?.length">
+  <p class="text-sm text-gray-600 mb-2">Moods:</p>
+
+  <div class="flex flex-wrap gap-2">
+    <span *ngFor="let m of book.moods" 
+      class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm">
+      
+      <ng-container *ngIf="isObject(m); else moodString">
+        {{ $any(m).name }}
+      </ng-container>
+
+      <ng-template #moodString>
+        {{ m }}
+      </ng-template>
+      
+    </span>
+  </div>
+</div>
       </div>
     </div>
 

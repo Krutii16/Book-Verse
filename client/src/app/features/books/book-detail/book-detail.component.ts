@@ -24,7 +24,7 @@ export class BookDetailComponent implements OnInit {
   loading = true;
   user$ = this.authService.user$;
   Math = Math;
-
+  
 
   constructor(
     private bookService: BookService,
@@ -80,5 +80,7 @@ export class BookDetailComponent implements OnInit {
       });
     }
   }
-  
+  isObject(value: any): boolean {
+  return typeof value === 'object' && value !== null;
+}
 }

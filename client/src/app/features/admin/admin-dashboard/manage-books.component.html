@@ -1,6 +1,5 @@
 <div class="p-6">
 
-  <!-- Header -->
   <div class="flex justify-between items-center mb-6">
     <h1 class="text-3xl font-bold">Manage Books</h1>
 
@@ -11,7 +10,6 @@
     </button>
   </div>
 
-  <!--  Book List -->
   <div class="grid md:grid-cols-3 gap-4">
 
     <div *ngFor="let book of books" class="bg-white p-4 shadow rounded">
@@ -23,108 +21,155 @@
       />
 
       <h2 class="font-bold text-lg">{{book.title}}</h2>
+
       <div class="flex justify-between items-center mb-3">
-                <span class="text-2xl font-bold text-blue-600">₹{{ book.price }}</span>
-                <span *ngIf="book.discount" class="text-xs bg-red-500 text-white px-2 py-1 rounded">
-                  -{{ book.discount }}%
-                </span>
-              </div>
-              <div class="flex justify-between items-center">
-                <div class="flex items-center">
-                  <span class="text-yellow-500">★</span>
-                  <span class="ml-1 text-sm text-gray-600">{{ book.rating }}</span>
-                </div>
-                <span class="text-xs text-gray-500">({{ book.reviews }} reviews)</span>
-              </div>
-           
+        <span class="text-2xl font-bold text-blue-600">₹{{ book.price }}</span>
+        <span *ngIf="book.discount" class="text-xs bg-red-500 text-white px-2 py-1 rounded">
+          -{{ book.discount }}%
+        </span>
+      </div>
+
+      <div class="flex justify-between items-center">
+        <div class="flex items-center">
+          <span class="text-yellow-500">★</span>
+          <span class="ml-1 text-sm text-gray-600">{{ book.rating }}</span>
+        </div>
+        <span class="text-xs text-gray-500">({{ book.reviews }} reviews)</span>
+      </div>
 
       <div class="flex gap-2 mt-3">
-
-        <button 
-          (click)="editBook(book)"
-          class="bg-blue-400 px-3 py-1 rounded">
-          Edit
-        </button>
-
-        <button 
-          (click)="deleteBook(book._id)"
-          class="bg-red-500 text-white px-3 py-1 rounded">
-          Delete
-        </button>
-
+        <button (click)="editBook(book)" class="bg-blue-400 px-3 py-1 rounded">Edit</button>
+        <button (click)="deleteBook(book._id)" class="bg-red-500 text-white px-3 py-1 rounded">Delete</button>
       </div>
 
     </div>
 
   </div>
 
-  <!--  ADD / EDIT POPUP -->
- <div *ngIf="showForm" class="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center">
+  <div *ngIf="showForm" class="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center overflow-y-auto">
 
-  <div class="bg-white p-6 rounded shadow w-[700px]">
+    <div class="bg-white p-6 rounded shadow w-[700px] max-h-[90vh] overflow-y-auto">
 
-    <h1 class="text-2xl font-bold text-blue-600 text-center mb-6">
-      {{ isEdit ? 'Edit Book' : 'Add Book' }}
-    </h1>
+      <h1 class="text-2xl font-bold text-blue-600 text-center mb-6">
+        {{ isEdit ? 'Edit Book' : 'Add Book' }}
+      </h1>
 
-    <!-- GRID FORM -->
-    <div class="grid grid-cols-2 gap-4">
+      <form #bookForm="ngForm">
 
-      <input [(ngModel)]="bookData.title" placeholder="Title"
-        class="border p-2 rounded">
+        <div class="grid grid-cols-2 gap-4">
 
-      <input [(ngModel)]="bookData.author" placeholder="Author"
-        class="border p-2 rounded">
+          <div>
+            <input [(ngModel)]="bookData.title" name="title" required placeholder="Title"
+              class="border p-2 rounded w-full"
+              [ngClass]="{'border-red-500': title.invalid && title.touched}" #title="ngModel">
+            <p *ngIf="title.invalid && title.touched" class="text-red-500 text-sm">Title required</p>
+          </div>
 
-      <input [(ngModel)]="bookData.isbn" placeholder="ISBN"
-        class="border p-2 rounded">
+          <div>
+            <input [(ngModel)]="bookData.author" name="author" required placeholder="Author"
+              class="border p-2 rounded w-full"
+              [ngClass]="{'border-red-500': author.invalid && author.touched}" #author="ngModel">
+            <p *ngIf="author.invalid && author.touched" class="text-red-500 text-sm">Author required</p>
+          </div>
 
-      <select [(ngModel)]="bookData.genre">
-  <option value="">Select Genre</option>
-  <option *ngFor="let g of genres" [value]="g._id">
-    {{ g.name }}
-  </option>
-</select>
+          <div>
+            <input [(ngModel)]="bookData.isbn" name="isbn" required pattern="^[0-9]{13}$" placeholder="ISBN"
+              class="border p-2 rounded w-full"
+              [ngClass]="{'border-red-500': isbn.invalid && isbn.touched}" #isbn="ngModel">
+            <p *ngIf="isbn.invalid && isbn.touched" class="text-red-500 text-sm">ISBN must be 13 digits</p>
+          </div>
 
-      <input [(ngModel)]="bookData.price" type="number" placeholder="Price"
-        class="border p-2 rounded">
+          <select [(ngModel)]="bookData.genre" name="genre" required multiple class="border p-2 rounded w-full col-span-1"
+            #genre="ngModel">
+            <option *ngFor="let g of genres" [ngValue]="g._id">
+              {{ g.name }}
+            </option>
+          </select>
 
-      <input [(ngModel)]="bookData.quantity" type="number" placeholder="Quantity"
-        class="border p-2 rounded">
+          <div>
+            <input [(ngModel)]="bookData.price" name="price" type="number" required min="1" placeholder="Price"
+              class="border p-2 rounded w-full"
+              [ngClass]="{'border-red-500': price.invalid && price.touched}" #price="ngModel">
+            <p *ngIf="price.invalid && price.touched" class="text-red-500 text-sm">Valid price required</p>
+          </div>
 
-      <input [(ngModel)]="bookData.discount" type="number" placeholder="Discount"
-        class="border p-2 rounded">
-    
-      <input [(ngModel)]="bookData.rating" type="number" placeholder="Rating"
-        class="border p-2 rounded">
+          <div>
+            <input [(ngModel)]="bookData.quantity" name="quantity" type="number" required min="0" placeholder="Quantity"
+              class="border p-2 rounded w-full"
+              [ngClass]="{'border-red-500': quantity.invalid && quantity.touched}" #quantity="ngModel">
+            <p *ngIf="quantity.invalid && quantity.touched" class="text-red-500 text-sm">Quantity required</p>
+          </div>
 
-      <input type="file" (change)="onImageUpload($event)"
-        class="border p-2 rounded">
+          <input [(ngModel)]="bookData.discount" name="discount" type="number" placeholder="Discount"
+            class="border p-2 rounded">
 
-      <!-- FULL WIDTH -->
-      <textarea [(ngModel)]="bookData.description"
-        placeholder="Describe the book"
-        class="border p-2 rounded col-span-2"></textarea>
+          <div>
+            <input [(ngModel)]="bookData.rating" name="rating" type="number" required min="1" max="5" placeholder="Rating"
+              class="border p-2 rounded w-full"
+              [ngClass]="{'border-red-500': rating.invalid && rating.touched}" #rating="ngModel">
+            <p *ngIf="rating.invalid && rating.touched" class="text-red-500 text-sm">Rating 1–5 only</p>
+          </div>
 
-    </div>
+          <div>
+            <input [(ngModel)]="bookData.language" name="language" required placeholder="Language"
+              class="border p-2 rounded w-full"
+              [ngClass]="{'border-red-500': language.invalid && language.touched}" #language="ngModel">
+            <p *ngIf="language.invalid && language.touched" class="text-red-500 text-sm">Language required</p>
+          </div>
 
-    <!-- BUTTONS -->
-    <div class="flex justify-end gap-2 mt-6">
+          <div>
+            <input [(ngModel)]="bookData.year" name="year" type="number" required placeholder="Year"
+              class="border p-2 rounded w-full"
+              [ngClass]="{'border-red-500': year.invalid && year.touched}" #year="ngModel">
+            <p *ngIf="year.invalid && year.touched" class="text-red-500 text-sm">Year required</p>
+          </div>
 
-      <button 
-        (click)="saveBook()"
-        class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
-        Save
-      </button>
+          <input type="file" (change)="onImageUpload($event)" class="border p-2 rounded">
 
-      <button 
-        (click)="closeForm()"
-        class="bg-gray-400 px-4 py-2 rounded hover:bg-gray-500">
-        Cancel
-      </button>
+          <div class="col-span-2">
+            <p class="mb-2 font-semibold">Select Moods</p>
+            <div class="flex flex-wrap gap-3">
+              <label *ngFor="let mood of moods" class="flex items-center gap-2">
+                <input 
+                  type="checkbox"
+                  [value]="mood._id"
+                  (change)="onMoodChange($event, mood._id)"
+                  [checked]="bookData.moods.includes(mood._id)"
+                />
+                {{ mood.name }}
+              </label>
+            </div>
+          </div>
+
+          <div class="col-span-2">
+            <textarea [(ngModel)]="bookData.description" name="description" required
+              placeholder="Describe the book"
+              class="border p-2 rounded w-full"
+              [ngClass]="{'border-red-500': description.invalid && description.touched}" #description="ngModel"></textarea>
+            <p *ngIf="description.invalid && description.touched" class="text-red-500 text-sm">Description required</p>
+          </div>
+
+        </div>
+
+        <div class="flex justify-end gap-2 mt-6">
+          <button 
+            (click)="bookForm.form.markAllAsTouched(); saveBook()"
+            [disabled]="bookForm.invalid"
+            class="bg-green-600 text-white px-4 py-2 rounded disabled:bg-gray-400">
+            Save
+          </button>
+
+          <button 
+            (click)="closeForm()"
+            class="bg-gray-400 px-4 py-2 rounded hover:bg-gray-500">
+            Cancel
+          </button>
+        </div>
+
+      </form>
 
     </div>
 
   </div>
 
-</div>
+</div>  
