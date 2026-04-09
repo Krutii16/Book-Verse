@@ -28,7 +28,7 @@
         <!-- Price -->
         <div class="mb-6">
           <span class="text-4xl font-bold text-blue-600">₹{{ book.price }}</span>
-          <span *ngIf="book.discount" class="ml-4 text-red-500">-{{ book.discount }}% OFF</span>
+        <!-- <span *ngIf="book.discount" class="ml-4 text-red-500">-{{ book.discount }}% OFF</span> -->
         </div>
 
         <!-- Details -->
@@ -88,7 +88,7 @@
           </div>
          <button 
   class="bg-blue-600 text-white px-4 py-2 rounded disabled:bg-gray-400"
-[disabled]="!book?.quantity || book.quantity <= 0 || (user$ | async)?.isAdmin"
+[disabled]="!book?.quantity || book.quantity <= 0 || !(user$ | async) || (user$ | async)?.isAdmin"
  (click)="addToCart()">
   Add to Cart
 </button>
@@ -96,24 +96,24 @@
       </div>
 
         <!-- Moods and Keywords -->
-        <div *ngIf="book.moods?.length">
-  <p class="text-sm text-gray-600 mb-2">Moods: </p>
+       <!-- <div *ngIf="book.moods?.length">
+  <p class="text-sm text-gray-600 mb-2">Moods:</p>
 
   <div class="flex flex-wrap gap-2">
     <span *ngFor="let m of book.moods" 
       class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm">
       
-      <ng-container *ngIf="isObject(m); else moodString">
+    <ng-container *ngIf="isObject(m); else moodString">
         {{ $any(m).name }}
       </ng-container>
 
       <ng-template #moodString>
-        {{ m }}
+        {{ isObject(m) ? $any(m).name : m }}
       </ng-template>
       
     </span>
   </div>
-</div>
+</div>-->
       </div>
     </div>
 

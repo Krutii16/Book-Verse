@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import Book from '../models/Book';
-
+import Mood from '../models/Mood';
+import Genre from "../models/Genre";
 /**
  * Get all books with pagination
  */
@@ -31,6 +32,7 @@ export const getAllBooks = async (req: Request, res: Response) => {
     res.status(500).json({ error: error.message });
   }
 };
+
 export const searchBooks = async (req: any, res: any) => {
   try {
     const query = req.query.query;
@@ -40,20 +42,24 @@ export const searchBooks = async (req: any, res: any) => {
         { title: { $regex: query, $options: 'i' } },
         { author: { $regex: query, $options: 'i' } }
       ]
-    }).populate('genre', 'name').populate('moods', 'name');
+    })
+      .populate('genre', 'name')
+      .populate('moods', 'name');
 
     res.json({ books });
   } catch (error) {
     res.status(500).json({ error: 'Search failed' });
   }
 };
+
 /**
  * Get book by ID
  */
 export const getBookById = async (req: Request, res: Response) => {
   try {
     const book = await Book.findById(req.params.id)
-      .populate('genre', 'name').populate('moods', 'name');
+      .populate('genre', 'name')
+      .populate('moods', 'name');
 
     if (!book) {
       return res.status(404).json({ error: 'Book not found' });
@@ -73,34 +79,81 @@ export const getBooksByGenre = async (req: Request, res: Response) => {
     const genreId = req.params.genreId;
 
     const books = await Book.find({
-      genre: genreId
-    }).populate('genre', 'name').populate('moods', 'name');
+      genre: { $in: [genreId] }
+    })
+      .populate('genre', 'name')
+      .populate('moods', 'name');
 
     res.json({ books });
   } catch (error) {
     res.status(500).json({ error: 'Error fetching books by genre' });
   }
 };
+
+/**
+ * Filter books 
+ */
 export const filterBooks = async (req: Request, res: Response) => {
   try {
-    const { moods, genre, minPrice, maxPrice } = req.query;
-
+    const { moods, minPrice, maxPrice } = req.query;
+    const genre = req.query.genre as string | string[];
     const filter: any = {};
 
-    if (genre) filter.genre = { $in: Array.isArray(genre) ? genre : [genre] };
+   if (genre) {
+  const genreValues: string[] = Array.isArray(genre)
+    ? genre
+    : typeof genre === 'string'
+      ? genre.split(',') // ✅ IMPORTANT FIX
+      : [];
 
+  const isObjectId = (val: string) =>
+    /^[0-9a-fA-F]{24}$/.test(val);
+
+  let genreIds: any[] = [];
+
+  if (isObjectId(genreValues[0])) {
+    genreIds = genreValues;
+  } else {
+    const genreDocs = await Genre.find({
+      name: { $in: genreValues }
+    });
+
+    genreIds = genreDocs.map(g => g._id);
+  }
+
+  filter.genre = { $in: genreIds };
+}
     if (minPrice || maxPrice) {
       filter.price = {};
       if (minPrice) filter.price.$gte = Number(minPrice);
       if (maxPrice) filter.price.$lte = Number(maxPrice);
     }
 
-    if (moods) {
-      filter.moods = { $in: [moods] };
-    }
+   if (moods) {
+  const moodValues = Array.isArray(moods)
+    ? moods.map(m => String(m))
+    : [String(moods)];
+
+  const isObjectId = (val: string) => /^[0-9a-fA-F]{24}$/.test(val);
+
+  let moodIds: any[] = [];
+
+  if (isObjectId(moodValues[0])) {
+    moodIds = moodValues;
+  } else {
+    const moodDocs = await Mood.find({
+      name: { $in: moodValues }
+    });
+
+    moodIds = moodDocs.map(m => m._id);
+  }
+
+  filter.moods = { $in: moodIds };
+}
 
     const books = await Book.find(filter)
-      .populate('genre', 'name').populate('moods', 'name');
+      .populate('genre', 'name')
+      .populate('moods', 'name');
 
     res.json({ books });
 
@@ -108,6 +161,7 @@ export const filterBooks = async (req: Request, res: Response) => {
     res.status(500).json({ error: error.message });
   }
 };
+
 /**
  * Featured books
  */
@@ -116,7 +170,8 @@ export const getFeaturedBooks = async (req: Request, res: Response) => {
     const books = await Book.find()
       .sort({ createdAt: -1 })
       .limit(12)
-      .populate('genre', 'name').populate('moods', 'name');
+      .populate('genre', 'name')
+      .populate('moods', 'name');
 
     res.json({ books });
   } catch (error) {
@@ -133,6 +188,7 @@ export const getBestsellers = async (req: Request, res: Response) => {
       .limit(20)
       .populate('genre', 'name')
       .populate('moods', 'name');
+
     res.json({ books });
   } catch (error) {
     res.status(500).json({ error: 'Error fetching bestsellers' });
@@ -173,7 +229,9 @@ export const updateBook = async (req: Request, res: Response) => {
       req.params.id,
       req.body,
       { new: true }
-    ).populate('genre', 'name').populate('moods', 'name');
+    )
+      .populate('genre', 'name')
+      .populate('moods', 'name');
 
     res.json(book);
   } catch (error) {

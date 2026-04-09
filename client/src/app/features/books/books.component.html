@@ -41,7 +41,7 @@
           </div>
         </div>
       </div>
-
+ 
       <!-- Books Grid -->
       <div class="md:col-span-3">
         <div *ngIf="loading" class="flex justify-center py-12">
@@ -63,30 +63,32 @@
               <p class="text-sm text-gray-600 mb-3">by {{ book.author }}</p>
               <div class="flex justify-between items-center mb-3">
                 <span class="text-2xl font-bold text-blue-600">₹{{ book.price }}</span>
-                <span *ngIf="book.discount" class="text-xs bg-red-500 text-white px-2 py-1 rounded">
+                <!--<span *ngIf="book.discount" class="text-xs bg-red-500 text-white px-2 py-1 rounded">
                   -{{ book.discount }}%
-                </span>
+                </span> -->
               </div>
               <div class="flex justify-between items-center">
                 <div class="flex items-center">
                   <span class="text-yellow-500">★</span>
                   <span class="ml-1 text-sm text-gray-600">{{ book.rating }}</span>
                 </div>
-                <span class="text-xs text-gray-500">({{ book.reviews }} reviews)</span>
+               <!-- <span class="text-xs text-gray-500">({{ book.reviews }} reviews)</span> -->
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Pagination -->
-        <div class="flex justify-center mt-8" *ngIf="totalBooks > limit">
-         <button
+       <!-- Pagination -->
+        <div class class="flex justify-center mt-8"> </div>
+          <div *ngIf="totalBooks >= limit">
+        <p>Page:</p> <button
   *ngFor="let pageNum of pages"
   (click)="changePage(pageNum)"
   [class.bg-blue-600]="page === pageNum"
-  class="px-3 py-1 border rounded">
+  class="px-2 py-1 text-sm border rounded">
   {{ pageNum }}
 </button>
+
         </div>
       </div>
     </div>

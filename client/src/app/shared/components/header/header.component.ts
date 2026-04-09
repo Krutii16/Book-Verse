@@ -56,6 +56,7 @@ isAdmin = false;
 
   logout(): void {
     this.authService.logout();
+    this.router.navigate(['/'])
   }
   goToBook(id: string): void {
   this.showSearchResults = false;

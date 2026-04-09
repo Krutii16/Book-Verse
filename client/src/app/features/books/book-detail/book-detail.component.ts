@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, ActivatedRoute } from '@angular/router';
+import { RouterModule, ActivatedRoute,Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { BookService } from '../../../core/services/book.service';
 import { ReviewService } from '../../../core/services/review.service';
@@ -31,7 +31,8 @@ export class BookDetailComponent implements OnInit {
     private reviewService: ReviewService,
     public cartService: CartService,
     private authService: AuthService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -55,6 +56,11 @@ export class BookDetailComponent implements OnInit {
   }
 
   addToCart(): void {
+    if (!this.user$) {
+    alert("Please login to add items to cart ");
+    this.router.navigate(['/login']);
+    return;
+  }
   if (!this.book || !this.book._id) return;
 
   if (this.book.quantity > 0) {

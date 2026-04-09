@@ -24,17 +24,23 @@ export class MyOrdersComponent implements OnInit {
         this.orders = res.orders;
       });
   }
+  
   deleteOrder(orderId: string) {
+
+  const confirmDelete = confirm("Are you sure you want to delete this order?");
+
+  if (!confirmDelete) return;
+
   this.http
     .delete(`http://localhost:5000/api/orders/${orderId}`)
     .subscribe({
       next: () => {
-        // remove instantly from UI
         this.orders = this.orders.filter(o => o._id !== orderId);
+        alert("Order deleted successfully ");
       },
       error: (err) => {
         console.error(err);
-        alert("Failed to delete order");
+        alert("Failed to delete order ");
       }
     });
 }

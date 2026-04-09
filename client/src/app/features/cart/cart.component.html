@@ -72,16 +72,16 @@
             </div>
             <div class="flex justify-between">
               <span class="text-gray-600">Shipping</span>
-              <span class="font-semibold">₹10.00</span>
+              <span class="font-semibold">Free</span>
             </div>
             <div class="flex justify-between">
-              <span class="text-gray-600">Tax</span>
-              <span class="font-semibold">₹{{ (totalPrice * 0.1).toFixed(2) }}</span>
+             <!-- <span class="text-gray-600">Tax</span>
+              <span class="font-semibold">₹{{ (totalPrice * 0.1).toFixed(2) }}</span>-->
             </div>
 
             <div class="border-t pt-4 flex justify-between">
               <span class="font-bold">Total</span>
-              <span class="font-bold text-lg text-blue-600">₹{{ (totalPrice + 10 + totalPrice * 0.1).toFixed(2) }}</span>
+              <span class="font-bold text-lg text-blue-600">₹{{ (totalPrice ).toFixed(2) }}</span>
             </div>
           </div>
 

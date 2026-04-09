@@ -1,15 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { FormsModule } from '@angular/forms'; // ✅ REQUIRED
+import { FormsModule } from '@angular/forms'; 
 
 import { CategoryService } from '../../core/services/category.service';
-import { Genre, Book } from '../../core/models/book.model'; // ✅ FIXED
-
+import { Genre, Book } from '../../core/models/book.model'; 
 @Component({
   selector: 'app-categories',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule], // ✅ FIXED
+  imports: [CommonModule, RouterModule, FormsModule], 
   templateUrl: './categories.component.html',
 })
 export class CategoriesComponent implements OnInit {
@@ -34,7 +33,7 @@ export class CategoriesComponent implements OnInit {
 
   ngOnInit(): void {
 
-    // ✅ Load genres
+    //  Load genres
     this.categoryService.getCategories().subscribe({
       next: (res: any) => {
         console.log('GENRES API:', res);
@@ -43,12 +42,12 @@ export class CategoriesComponent implements OnInit {
       error: (err) => console.error(err)
     });
 
-    // ✅ IMPORTANT: Load books
+    // Load books
     this.categoryService.getBooks().subscribe({
       next: (res: any) => {
         console.log('BOOKS API:', res);
         this.originalBooks = res.books || [];
-        this.applyFilters(); // apply filters after loading
+        this.applyFilters(); 
         this.loading = false;
       },
       error: (err) => {
@@ -61,7 +60,7 @@ export class CategoriesComponent implements OnInit {
   applyFilters(): void {
     let filtered = [...this.originalBooks];
 
-    // ✅ Genre filter
+    //  Genre filter
     if (this.selectedGenre) {
       const selected = this.selectedGenre.toLowerCase().trim();
 
@@ -76,7 +75,7 @@ export class CategoriesComponent implements OnInit {
       });
     }
 
-    // ✅ Price filter
+    //  Price filter
     if (this.minPrice !== null) {
       filtered = filtered.filter(b => b.price >= this.minPrice!);
     }

@@ -54,8 +54,8 @@ export class CheckoutComponent implements OnInit {
   }
 
   getTotal(): number {
-    const shipping = 10;
-    const tax = this.cartTotal * 0.1;
-    return this.cartTotal + shipping + tax;
-  }
+    //const shipping = 10;
+    //const tax = this.cartTotal * 0.1;
+    return this.cartTotal //+ shipping + tax;
+  } 
 }

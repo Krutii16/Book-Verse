@@ -12,43 +12,48 @@ export class BookService {
 
   constructor(private http: HttpClient) {}
 
-  // Get all books
- getAllBooks() {
-  return this.http.get('/api/books');
-}
+  getAllBooks() {
+     return this.http.get(`http://localhost:5000/api/books?limit=100`);
+  }
 
-getBooksByGenre(genreId: string) {
-  return this.http.get(`/api/books/genre/${genreId}`);
-}
+  getBooksByGenre(genreId: string) {
+    return this.http.get(`${this.apiUrl}/genre/${genreId}`);
+  }
 
-getBooksByMood(mood: string) {
-  return this.http.get(`/api/books/filter?moods=${mood}`);
-}
-  // Get book by ID
   getBookById(id: string): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/${id}`);
   }
 
-  // Featured
   getFeaturedBooks(): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/featured`);
   }
 
-  // Bestsellers
   getBestsellers() {
-  return this.http.get('/api/books/bestsellers');
-}
-  // Search
+    return this.http.get(`${this.apiUrl}/bestsellers?limit=6`);
+  }
+
   searchBooks(query: string): Observable<any> {
     const params = new HttpParams().set('query', query);
     return this.http.get<any>(`${this.apiUrl}/search`, { params });
   }
 
-  // Filter
   filterBooks(filters: any): Observable<any> {
     let params = new HttpParams();
 
-    if (filters.genre) params = params.set('genre', filters.genre);
+    if (filters.genre) {
+      const genres = Array.isArray(filters.genre) ? filters.genre : [filters.genre];
+      genres.forEach((g: string) => {
+        params = params.append('genre', g);
+      });
+    }
+
+    if (filters.moods) {
+      const moods = Array.isArray(filters.moods) ? filters.moods : [filters.moods];
+      moods.forEach((m: string) => {
+        params = params.append('moods', m);
+      });
+    }
+
     if (filters.minPrice) params = params.set('minPrice', filters.minPrice);
     if (filters.maxPrice) params = params.set('maxPrice', filters.maxPrice);
     if (filters.sortBy) params = params.set('sortBy', filters.sortBy);
@@ -57,19 +62,15 @@ getBooksByMood(mood: string) {
 
     return this.http.get<any>(`${this.apiUrl}/filter`, { params });
   }
-  
 
-  // Create
   createBook(book: Book): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}`, book);
   }
 
-  // Update
   updateBook(id: string, book: Partial<Book>): Observable<any> {
     return this.http.put<any>(`${this.apiUrl}/${id}`, book);
   }
 
-  // Delete
   deleteBook(id: string): Observable<any> {
     return this.http.delete<any>(`${this.apiUrl}/${id}`);
   }

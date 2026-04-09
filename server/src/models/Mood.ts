@@ -1,7 +1,7 @@
 import mongoose, { Schema } from 'mongoose';
 import { IMood } from '../types';
 
-const moodSchema = new Schema<IMood>(
+const moodSchema = new mongoose.Schema(
   {
     name: { type: String, required: true, unique: true },
     description: String,
@@ -10,4 +10,4 @@ const moodSchema = new Schema<IMood>(
   { timestamps: true }
 );
 
-export default mongoose.model<IMood>('Mood', moodSchema);
+export default mongoose.model('Mood', moodSchema);

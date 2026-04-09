@@ -87,8 +87,14 @@ export class ManageBooksComponent implements OnInit {
     //  IMPORTANT: set genreId properly
     this.bookData = {
       ...book,
-      genre: book.genre?.map((g: any) => g._id) || [],
-      moods: book.moods || [] 
+      genre: book.genre
+        ? book.genre
+            .filter((g: any) => g && g._id).map((g: any) => g._id)
+        : [],
+      moods: book.moods
+        ? book.moods
+            .filter((m: any) => m && m._id).map((m: any) => m._id)
+        : [], 
     };
 
     this.showForm = true;

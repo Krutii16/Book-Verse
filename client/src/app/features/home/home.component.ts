@@ -23,7 +23,7 @@ export class HomeComponent implements OnInit {
   constructor(
     private bookService: BookService,
     private metadataService: MetadataService,
-    private router: Router   // ✅ FIX: add router
+    private router: Router   
   ) {}
 
   ngOnInit(): void {
@@ -34,7 +34,7 @@ export class HomeComponent implements OnInit {
 
     this.bookService.getAllBooks().subscribe({
       next: (response: any) => {
-        this.featuredBooks = response?.books?.slice(0, 8) ?? [];
+        this.featuredBooks = response?.books?.slice(0, 6) ?? [];
       },
       error: (err) => {
         console.error('Featured Books Error:', err);
@@ -44,7 +44,7 @@ export class HomeComponent implements OnInit {
 
     this.bookService.getBestsellers().subscribe({
       next: (response: any) => {
-        this.bestsellers = response?.books ?? [];
+        this.bestsellers = response?.books?.slice(0, 6) ?? [];
       },
       error: (err) => {
         console.error('Bestsellers Error:', err);
@@ -65,9 +65,9 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  // =========================
-  // ✅ NAVIGATION FIX HERE
-  // =========================
+  // ================
+  //  NAVIGATION FIX
+  // ================
 
   goToGenre(genre: Genre): void {
     this.router.navigate(['/books'], {
