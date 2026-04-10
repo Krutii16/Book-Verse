@@ -1,5 +1,6 @@
 import mongoose, { Schema } from 'mongoose';
 import { IUser } from '../types';
+import { string } from 'joi';
 
 const userSchema = new Schema<IUser>(
   {

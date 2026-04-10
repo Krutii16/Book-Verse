@@ -15,6 +15,7 @@ import moodRoutes from './routes/moods';
 import keywordRoutes from './routes/keywords';
 import { adminMiddleware } from './middleware/auth';
 import userRoutes from './routes/user';
+import paymentRoutes from "./routes/payment";
 dotenv.config();
 
 const app: Express = express();
@@ -45,6 +46,7 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/users', userRoutes);
 //app.use('/api/admin', adminMiddleware, adminRoutes);
 app.use('/api/contacts', contactRoutes);
+app.use("/api/payment", paymentRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {

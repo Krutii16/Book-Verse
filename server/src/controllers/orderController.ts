@@ -82,42 +82,61 @@ export const getOrderById = async (req: Request, res: Response) => {
 };
 
 export const getAllOrders = async (req: Request, res: Response) => {
+  console.log("🔥 ADMIN CONTROLLER START");
+
   try {
     const orders = await Order.find().sort({ createdAt: -1 });
-    const updatedOrders = await Promise.all(
-      orders.map(async (order: any) => {
 
-        //  get user email
+    const updatedOrders = [];
+
+    for (const order of orders) {
+      try {
         const user = await User.findById(order.userId);
 
-        //  get book titles
-        const booksWithDetails = await Promise.all(
-          order.books.map(async (item: any) => {
+        const booksWithDetails = [];
+
+        for (const item of (order.books || [])) {
+          try {
+            if (!item.bookId) {
+              booksWithDetails.push({
+                title: "Book not found",
+                quantity: item.quantity || 0,
+                price: item.price || 0
+              });
+              continue;
+            }
+
             const book = await Book.findById(item.bookId);
 
-            return {
-              title: book?.title,
+            booksWithDetails.push({
+              title: book?.title || "Book not found",
               quantity: item.quantity,
-              price: item.price
-            };
-          })
-        );
+              price: item.price || 0
+            });
 
-        return {
+          } catch (err) {
+            console.error("❌ BOOK ERROR:", err);
+          }
+        }
+
+        updatedOrders.push({
           ...order.toObject(),
-          userEmail: user?.email,
+          userEmail: user?.email || "Unknown User",
           books: booksWithDetails
-        };
-      })
-    );
+        });
+
+      } catch (err) {
+        console.error("❌ ORDER ERROR:", err);
+      }
+    }
 
     res.json({ orders: updatedOrders });
 
   } catch (error: any) {
+    console.error("🔥 FINAL ADMIN ERROR:", error);
     res.status(500).json({ error: error.message });
   }
 };
-
 export const updateOrderStatus = async (req: Request, res: Response) => {
   try {
     const { status } = req.body;
