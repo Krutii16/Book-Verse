@@ -22,4 +22,14 @@ export class ManageContactComponent implements OnInit {
         this.contacts = data;
       });
   }
+  reply(contact: any) {
+  const subject = encodeURIComponent("Regarding your message");
+  const body = encodeURIComponent(
+    `Hi ${contact.name},\n\nThanks for reaching out.\n\n"${contact.message}"`
+  );
+
+  const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${contact.email}&su=${subject}&body=${body}`;
+
+  window.open(gmailUrl, '_blank');
+}
 }
